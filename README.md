@@ -1,29 +1,45 @@
-﻿# Git Changelog Generator (Claude Code Skill)
+﻿# Claude Code Pre-Tool-Use Security Hook
 
-Automatically generate a clean, structured `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) standards directly from your git commit history.
+An automatic security hook for [Claude Code](https://docs.anthropic.com/claude-code/hooks) that intercepts and blocks destructive bash commands before execution.
 
-## 3-Step Setup & Usage
+## Blocked Patterns
+- `rm -rf` (Recursive forced deletion)
+- `DROP TABLE` (Database table drops)
+- `git push --force`, `-f`, `--force-with-lease` (Destructive git history rewrites)
+- `TRUNCATE [TABLE]` (Full table wipes)
+- `DELETE FROM` without a `WHERE` clause (Unbounded deletions)
 
-### 1. Place in Your Repository
-Copy `changelog.sh` (and `SKILL.md` if using Claude Code) into the root of your project:
-```bash
-chmod +x changelog.sh
-```
-
-### 2. Run the Command
-Generate your changelog from git history since the last release tag:
-```bash
-bash changelog.sh
-```
-*(Or inside Claude Code, run `/generate-changelog`)*
-
-### 3. Review `CHANGELOG.md`
-Open the generated `CHANGELOG.md` to see your commits neatly categorized into **Added**, **Fixed**, **Changed**, and **Removed**.
+Blocked attempts are automatically logged to `~/.claude/hooks/blocked.log` with timestamp, attempted command, and project path. Safe commands execute normally.
 
 ---
 
-## Features
-- **Auto-tag detection:** Automatically compares from the latest git tag (`git describe --tags --abbrev=0`) or all commits if no tags exist.
-- **Conventional Commits & Semantic keywords:** Automatically parses `feat:`, `fix:`, `refactor:`, `chore:`, `remove:`, etc.
-- **Dry-run mode:** Use `bash changelog.sh --dry-run` to preview the markdown without saving.
-- **Custom output:** Specify a custom file with `bash changelog.sh -o RELEASE_NOTES.md`.
+## Installation (2 Commands)
+
+```bash
+mkdir -p ~/.claude/hooks && cp block_destructive_commands.py ~/.claude/hooks/
+chmod +x ~/.claude/hooks/block_destructive_commands.py
+```
+
+---
+
+## Configuration in Claude Code
+
+Add the hook to your `~/.claude/settings.json` under `hooks`:
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "command": "python3 ~/.claude/hooks/block_destructive_commands.py"
+      }
+    ]
+  }
+}
+```
+
+## Running Tests
+Run the test suite to verify all rules:
+```bash
+python3 test_hook.py
+```

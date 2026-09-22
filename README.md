@@ -1,29 +1,37 @@
-﻿# Git Changelog Generator (Claude Code Skill)
+﻿# Claude Code PR Review Sub-Agent
 
-Automatically generate a clean, structured `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) standards directly from your git commit history.
+A dedicated sub-agent for [Claude Code](https://docs.anthropic.com/claude-code) and GitHub Actions that analyzes Pull Request diffs and posts structured, high-signal Markdown review comments.
 
-## 3-Step Setup & Usage
-
-### 1. Place in Your Repository
-Copy `changelog.sh` (and `SKILL.md` if using Claude Code) into the root of your project:
-```bash
-chmod +x changelog.sh
-```
-
-### 2. Run the Command
-Generate your changelog from git history since the last release tag:
-```bash
-bash changelog.sh
-```
-*(Or inside Claude Code, run `/generate-changelog`)*
-
-### 3. Review `CHANGELOG.md`
-Open the generated `CHANGELOG.md` to see your commits neatly categorized into **Added**, **Fixed**, **Changed**, and **Removed**.
+## Features
+- **Structured Markdown Output**: Generates 2–3 sentence change summaries, identified risks, improvement suggestions, and a confidence score (Low / Medium / High).
+- **Dual Execution Modes**: Works locally via CLI or automatically in CI via GitHub Actions.
+- **Zero Heavy Dependencies**: Built with Python 3 standard library (`urllib`, `re`, `json`).
 
 ---
 
-## Features
-- **Auto-tag detection:** Automatically compares from the latest git tag (`git describe --tags --abbrev=0`) or all commits if no tags exist.
-- **Conventional Commits & Semantic keywords:** Automatically parses `feat:`, `fix:`, `refactor:`, `chore:`, `remove:`, etc.
-- **Dry-run mode:** Use `bash changelog.sh --dry-run` to preview the markdown without saving.
-- **Custom output:** Specify a custom file with `bash changelog.sh -o RELEASE_NOTES.md`.
+## 1. CLI Usage
+
+Run the review agent directly against any public GitHub pull request:
+```bash
+python claude_review.py --pr https://github.com/owner/repo/pull/123
+```
+Or save the review to a file:
+```bash
+python claude_review.py --pr https://github.com/owner/repo/pull/123 --output review.md
+```
+
+*(Optional: Set `export GITHUB_TOKEN=ghp_...` for private repositories or higher GitHub API rate limits).*
+
+---
+
+## 2. GitHub Actions Integration
+
+Drop `.github/workflows/claude-review.yml` into your repository. Whenever a pull request is opened or updated, the action automatically inspects the diff and comments the review directly on the PR.
+
+---
+
+## 3. Verified Sample Outputs
+
+See the `sample-outputs/` directory for verified real-world PR reviews:
+- [Sample 1: facebook/react#28001](sample-outputs/pr-review-sample-1.md)
+- [Sample 2: vercel/next.js#62015](sample-outputs/pr-review-sample-2.md)

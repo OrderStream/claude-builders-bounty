@@ -1,29 +1,22 @@
-﻿# Git Changelog Generator (Claude Code Skill)
+﻿# Next.js 15 + SQLite SaaS Template (`CLAUDE.md`)
 
-Automatically generate a clean, structured `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) standards directly from your git commit history.
+A production-ready, opinionated `CLAUDE.md` template designed for SaaS projects built with **Next.js 15 App Router**, **SQLite (Turso / better-sqlite3)**, and **Drizzle ORM**.
 
-## 3-Step Setup & Usage
+## Why This Template?
+Claude Code works best when given strict, opinionated architectural guardrails. This template ensures that Claude Code:
+1. Always leverages React Server Components (RSC) by default.
+2. Properly manages SQLite concurrency with WAL mode and singleton connection caching.
+3. Enforces strict input validation on all Server Actions with Zod.
+4. Prevents common pitfalls like client-side database queries and unparameterized SQL.
 
-### 1. Place in Your Repository
-Copy `changelog.sh` (and `SKILL.md` if using Claude Code) into the root of your project:
+## How to Use in 2 Steps
+
+### 1. Copy `CLAUDE.md`
+Copy `CLAUDE.md` into the root directory of your Next.js project.
+
+### 2. Launch Claude Code
+Start Claude Code in your project directory:
 ```bash
-chmod +x changelog.sh
+claude
 ```
-
-### 2. Run the Command
-Generate your changelog from git history since the last release tag:
-```bash
-bash changelog.sh
-```
-*(Or inside Claude Code, run `/generate-changelog`)*
-
-### 3. Review `CHANGELOG.md`
-Open the generated `CHANGELOG.md` to see your commits neatly categorized into **Added**, **Fixed**, **Changed**, and **Removed**.
-
----
-
-## Features
-- **Auto-tag detection:** Automatically compares from the latest git tag (`git describe --tags --abbrev=0`) or all commits if no tags exist.
-- **Conventional Commits & Semantic keywords:** Automatically parses `feat:`, `fix:`, `refactor:`, `chore:`, `remove:`, etc.
-- **Dry-run mode:** Use `bash changelog.sh --dry-run` to preview the markdown without saving.
-- **Custom output:** Specify a custom file with `bash changelog.sh -o RELEASE_NOTES.md`.
+Claude Code will immediately detect `CLAUDE.md`, understand your stack and folder conventions, and generate consistent, type-safe code without asking clarifying questions.
